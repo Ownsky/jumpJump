@@ -14,3 +14,4 @@ class Character:
         pass
 
     def refresh(self):
+        pass

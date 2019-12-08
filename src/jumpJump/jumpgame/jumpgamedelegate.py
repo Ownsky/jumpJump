@@ -16,7 +16,9 @@ class JumpGameDelegate:
         pygame.init()
         self.width = width
         self.height = 480
-        self.ground_y = height - height/5
+        self.ground_height = height/5
+        # self.ground_y = height - height/5
+        self.sky_height = height - self.ground_height
 
     # Texture of ground
     # groundfield = list()
@@ -32,7 +34,11 @@ class JumpGameDelegate:
     score = 0
     scorefont = None
     scoresurface = None
+    score_coordinate = (0, 0)
     # background = None
+
+    def coordinate_convert(self, coordinate):
+        return tuple([coordinate[0], self.height - self.ground_height - coordinate[1]])
 
     def start(self):
         self.init_screen()
@@ -44,16 +50,27 @@ class JumpGameDelegate:
         pygame.display.set_caption("jump jump!")
 
     def create_world(self):
+
         self.screen.fill(WHITE)
-        pygame.draw.line(self.screen, BLACK, (0, self.ground_y), (self.width, self.ground_y))
-        pygame.display.flip()
-        self.scorefont = pygame.font.Font()
+        pygame.draw.line(self.screen, BLACK,
+                         self.coordinate_convert((0, self.ground_height)),
+                         self.coordinate_convert((self.width, self.ground_height)))
+
+        self.scorefont = pygame.font.Font('resources/font/AdobeHeiti.otf', 20)
+        self.score_coordinate = self.coordinate_convert(
+            (self.width - self.ground_height, self.sky_height - self.ground_height)
+        )
         self.refresh_score()
+
+        #TODO: init char
+        self.character = Character(None, self.screen)
+
         pass
+        pygame.display.flip()
 
     def refresh_score(self):
-        self.scoresurface = self.scorefont.render(self.score, False, BLACK)
-        self.screen.blit(self.scoresurface, )
+        self.scoresurface = self.scorefont.render(str(self.score), False, BLACK)
+        self.screen.blit(self.scoresurface, self.score_coordinate)
 
     def run(self):
         while True:
@@ -64,10 +81,11 @@ class JumpGameDelegate:
                 self.loop()
 
     def loop(self):
-        # check jump
+        # TODO: check jump
         self.character.refresh()
         for obs in self.obstacles:
             obs.refresh()
             if obs.crash(self.character):
-                stop()
+                pass
+                # TODO: stop()
         pass
